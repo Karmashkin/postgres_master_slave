@@ -37,8 +37,8 @@ services:
     environment:
       - TZ=Europe/Kiev
       - TIMEZONE=Europe/Kiev
-      - POSTGRES_USER=testAccess
-      - POSTGRES_PASSWORD=pgpass
+      - POSTGRES_USER=pguser
+      - POSTGRES_PASSWORD=testAccess
       - REPLICATION_USER=repuser
       - REPLICATION_PASSWORD=reppass
       - PGDATA=/var/lib/postgresql/data
