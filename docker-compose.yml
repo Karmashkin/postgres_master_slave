@@ -49,6 +49,28 @@ services:
     networks:
       - db_back
 
+  postgres_backup:
+    build: ./postgres_backup
+    image: 'postgres_backup'
+    restart: always
+    depends_on:
+      - postgres_master
+    volumes:
+      - ./postgres_backup-data:/backup
+      - ./postgres_backup-data/tmp:/backup/tmp
+      - ./postgres_backup/crontab-everyday.yaml:/tmp/crontab.yaml
+    environment:
+      - TZ=Europe/Kiev
+      - TIMEZONE=Europe/Kiev
+      - REPLICATION_USER=repuser
+      - REPLICATION_PASSWORD=reppass
+      - TMPDATA=/backup/tmp
+      - MASTER_HOST=postgres_master
+#    command: ping localhost
+    networks:
+      - db_back
+
+
 networks:
   db_back:
     driver: bridge

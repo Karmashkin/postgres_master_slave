@@ -1,0 +1,24 @@
+defaults:
+  captureStderr: false
+  captureStdout: true
+  onFailure:
+    report:
+      mail:
+        from: cron@someone.com
+        to: admin@someone.com
+        smtpHost: postfix
+        subject: Cron job '{{name}}' {% if success %}completed{% else %}failed{% endif %}
+        body: |
+          command: {{command}}
+          shell: {{shell}}
+          environment: {{environment}}
+          STDERR: {{stderr}}
+          STDOUT: {{stdout}}
+          exit code: {{exit_code}}
+
+jobs:
+- name: backup postgres db everyday
+  command: /run.sh
+  schedule: "27 19 * * *"
+  utc: false
+
