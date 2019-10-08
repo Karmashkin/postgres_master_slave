@@ -1,0 +1,55 @@
+version: '2.1'
+
+services:
+  postgres_master:
+#    build: ./postgres_master
+    image: 'postgres:9.4-alpine'
+    restart: always
+    volumes:
+      - ./postgres_master:/tmp/postgresql
+      - ./postgres_master/init-master.sh:/docker-entrypoint-initdb.d/init.sh
+      - ./postgres_master-data:/var/lib/postgresql/data
+    environment:
+      - TZ=Europe/Kiev
+      - TIMEZONE=Europe/Kiev
+      - POSTGRES_DB=testAccess
+      - POSTGRES_USER=pguser
+      - POSTGRES_PASSWORD=pgpass
+      - REPLICATION_USER=repuser
+      - REPLICATION_PASSWORD=reppass
+      - PGDATA=/var/lib/postgresql/data
+#    ports:
+#      - '5433:5432/tcp'
+#    command: ping localhost
+    networks:
+      - db_back
+
+  postgres_slave:
+#    build: ./postgres_slave
+    image: 'postgres:9.4-alpine'
+    restart: always
+    depends_on:
+      - postgres_master
+    volumes:
+      - ./postgres_slave:/tmp/postgresql
+      - ./postgres_slave/init-slave.sh:/docker-entrypoint-initdb.d/init.sh
+      - ./postgres_slave-data:/var/lib/postgresql/data
+    environment:
+      - TZ=Europe/Kiev
+      - TIMEZONE=Europe/Kiev
+      - POSTGRES_USER=pguser
+      - POSTGRES_PASSWORD=pgpass
+      - REPLICATION_USER=repuser
+      - REPLICATION_PASSWORD=reppass
+      - PGDATA=/var/lib/postgresql/data
+      - MASTER_HOST=postgres_master
+    ports:
+      - '5433:5432/tcp'
+#    command: ping localhost
+    networks:
+      - db_back
+
+networks:
+  db_back:
+    driver: bridge
+
